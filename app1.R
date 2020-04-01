@@ -1,53 +1,40 @@
 library(shiny)
-
-# Define UI for dataset viewer app ----
 ui <- fluidPage(
-  
-  # App title ----
   titlePanel("Reactivity"),
   
-  # Sidebar layout with input and output definitions ----
+  tags$head(
+    tags$style(type="text/css", "label.control-label, .selectize-control.single{ display: table-cell; text-align: center; vertical-align: middle; } .form-group { display: table-row;}")
+  ),
+  
   fluidRow(
-    
-    # Sidebar panel for inputs ----
     column(4,
-      
-      # Input: Text for providing a caption ----
-      # Note: Changes made to the caption in the textInput control
-      # are updated in the output area immediately as you type
       textInput(inputId = "caption",
                 label = "Caption:",
                 value = "Data Summary")),
-      #br(),
       column(4,
-      
-      # Input: Selector for choosing dataset ----
       selectInput(inputId = "dataset",
-                  label = "Choose a dataset:",
+                  label = "Choose a dataset:", selectize = FALSE,
                   choices = c("rock", "pressure", "cars"))),
-      #br(),
       column(4,
-      # Input: Numeric entry for number of obs to view ----
       numericInput(inputId = "obs",
                    label = "Number of observations to view:",
                    value = 10))
       
     ),
     hr(),
-    # Main panel for displaying outputs ----
-      
-      # Output: Formatted text for caption ----
+  fluidRow(
+    column(7,
       h3(textOutput("caption", container = span)),
       
-      # Output: Verbatim text for data summary ----
-      verbatimTextOutput("summary"),
+      verbatimTextOutput("summary")),
+    
+    column(5, 
       
-      # Output: HTML table with requested number of observations ----
-      tableOutput("view")
+      tableOutput("view"))
       
     )
 
-
+)
 
 # Define server logic to summarize and view selected dataset ----
 server <- function(input, output) {
