@@ -1,32 +1,48 @@
-library(shiny)
-ui <-
-  fluidPage(
-  #navbarPage(
-    titlePanel("Soc Gen"),
-    sidebarLayout(
-      sidebarPanel(
-    
-   # tabPanel("Home"),
-    #tabPanel("Slider",
-      sliderInput("test", label = "test", min = 1, max = 10, value = 5, step = 0.5),
-      tags$hr(),
-      checkboxInput("Yes", "Yes", value = FALSE),
-      tags$hr(),
-      radioButtons("radio",label = "Radio Test",choices = list("Monday", "Tuesday", "Wednesday", "Thursday"))
-    #)
+## app.R ##
+library(shinydashboard)
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Basic dashboard"),
+  ## Sidebar content
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+      menuItem("Widgets", tabName = "widgets", icon = icon("th"))
+    )
+  ),
+  ## Body content
+  dashboardBody(
+    tabItems(
+      # First tab content
+      tabItem(tabName = "dashboard",
+              fluidRow(
+                box(plotOutput("plot1", height = 400)),
+                
+                box(
+                  title = "Controls",
+                  sliderInput("slider", "Number of observations:", 1, 100, 50), height = 300, background = "yellow",
+                  textInput("text", "Text input:")
+                  
+                )
+              )
       ),
-   
-   mainPanel(
-     navbarPage(
-       "",
-      tabPanel("Hello", 
-               h1("This is the main panel page"),
-               img(src = "Rlogo.png", height = 300, width = 300))
-     )
-   )
+      
+      # Second tab content
+      tabItem(tabName = "widgets",
+              h2("Widgets tab content")
+      )
+    )
   )
-  )
+)
+
+server <- function(input, output) {
+  set.seed(145)
+  histdata <- rnorm(500)
   
-server <- function(input, output){}
+  output$plot1 <- renderPlot({
+    data <- histdata[seq_len(input$slider)]
+    hist(data)
+  })
+}
 
 shinyApp(ui, server)
